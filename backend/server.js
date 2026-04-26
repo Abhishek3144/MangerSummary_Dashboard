@@ -4,7 +4,9 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 
-const { PORT, mongoURL } = require("./config");
+const PORT = process.env.PORT || 5000;
+const mongoURL = process.env.MONGO_URL;
+
 const testRoutes = require("./routes/testRoutes");
 const insightRoutes = require("./routes/insightRoutes");
 
