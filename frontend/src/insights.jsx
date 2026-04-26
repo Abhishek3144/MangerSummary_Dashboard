@@ -356,11 +356,11 @@ export default function Insights() {
   }, []);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io(import.meta.env.VITE_BACKEND_URL);
 
     const fetchInitialData = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/insights");
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/insights`);
         const d = await res.json();
         setData(d);
         setLoading(false);
