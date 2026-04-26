@@ -24,4 +24,17 @@ router.get("/insights", async (req, res) => {
   }
 });
 
+router.post("/insights", async (req, res) => {
+  try {
+    const { teamName, tasksCompleted, bugs, prsMerged, deployments, cycleTime } = req.body;
+    const newEntry = new ManagerSummary({
+      teamName, tasksCompleted, bugs, prsMerged, deployments, cycleTime
+    });
+    await newEntry.save();
+    res.status(201).json({ message: "Entry added successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
