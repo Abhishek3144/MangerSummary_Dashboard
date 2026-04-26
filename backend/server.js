@@ -15,32 +15,31 @@ const { generateInsights } = require("./services/insightService");
 
 const app = express();
 
-// Create HTTP server + Socket.io
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*" }
+  cors: {
+    origin: "https://manger-summary-dashboard-vzgw.vercel.app"
+  }
 });
 
-// Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://manger-summary-dashboard-vzgw.vercel.app"
+}));
 app.use(express.json());
 
-// Routes
 app.use("/api", testRoutes);
 app.use("/api", insightRoutes);
 
-// MongoDB Connection
 mongoose.connect(mongoURL)
   .then(() => {
     console.log("MongoDB Connected");
 
-    //  CHANGE STREAM (REAL-TIME)
     const changeStream = mongoose.connection
       .collection("managersummaries")
       .watch();
 
     changeStream.on("change", async () => {
-      console.log("DB Change Detected");
+      console.log("DB Change Detected 🚀");
 
       const data = await ManagerSummary.find();
 
@@ -49,7 +48,7 @@ mongoose.connect(mongoURL)
           team: item.teamName || item.team,
           insights: generateInsights(item)
         }))
-        .filter(item => item.team && item.insights.length > 0); 
+        .filter(item => item.team && item.insights.length > 0);
 
       io.emit("insightsUpdated", result);
     });
@@ -57,7 +56,6 @@ mongoose.connect(mongoURL)
   })
   .catch(err => console.log(err));
 
-// Start server
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
